@@ -1,0 +1,36 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "aftman: install",
+			"type": "shell",
+			"command": "aftman install",
+			"problemMatcher": []
+		},
+		{
+			"label": "rojo: serve",
+			"type": "shell",
+			"command": "rojo serve",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "rojo: sourcemap",
+			"type": "shell",
+			"command": "rojo sourcemap default.project.json -o sourcemap.json",
+			"problemMatcher": []
+		},
+		{
+			"label": "selene: check src",
+			"type": "shell",
+			"command": "selene src",
+			"problemMatcher": []
+		},
+		{
+			"label": "stylua: check src",
+			"type": "shell",
+			"command": "stylua --check src",
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,20 @@
+# Rojo
+sourcemap.json
+*.rbxl
+*.rbxlx
+build/
+include/
+
+# Wally
+wally_modules/
+Packages/
+wally.lock
+
+# Lune
+.lune/
+lune_modules/
+
+# Aftman / OS
+.vscode/.rottest
+.DS_Store
+Thumbs.db
