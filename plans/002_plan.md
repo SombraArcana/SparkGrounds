@@ -1,12 +1,12 @@
 # Plan 002 — SPEC 002_ON_SELECTION_VALIDATED
 
 Spec único lido: `specs/002_ON_SELECTION_VALIDATED.md`
-Aprovado? Aguardando Human Loop (não implementar sem aprovação).
+Aprovado pelo Human Loop — implementado.
 
 ## Comportamento → Evento → Dado → Sistema
 - Comportamento: a cada mudança de seleção, validar célula por célula (limites, colisão, tipo de piso) e calcular custo acumulado em tempo real.
 - Evento (fonte da verdade, único): `ON_SELECTION_VALIDATED`
-- Dados exatos: `cells: array<Vector2>`, `valid_cells: array<Vector2>`, `invalid_cells: array<Vector2>`, `total_cost: number`, `can_afford: boolean`
+- Dados exatos: `cells: array<Vector2>`, `valid_cells:  array<Vector2>`, `invalid_cells: array<Vector2>`, `total_cost: number`, `can_afford: boolean`
 - Sistema: client-only. Sem visual, sem servidor, sem alterar o grid real (§5 fora do escopo — verde/vermelho é só classificação `valid/invalid`; quem pinta é spec futura).
 
 ## Entrada (do próprio spec §3, sem inventar)
