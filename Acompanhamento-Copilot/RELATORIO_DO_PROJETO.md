@@ -9,9 +9,9 @@ Projeto Roblox escrito em Luau e organizado com Rojo. A implementação usa mód
 
 ## Trabalho documentado
 
-- Os cinco SPECs atômicos 001–005 foram organizados em arquivos separados em `specs/`; o SPEC 001, que estava vazio, foi preenchido.
-- As notas recebidas sobre grid esparso, object pooling, validação server-side e bitmask foram reunidas em [NOTAS_TECNICAS.md](../specs/NOTAS_TECNICAS.md).
-- Existe material anterior em [trabalhointermediario.md](../meu/trabalhointermediario.md) e [spec001.md](../specs/spec001.md); eles não foram substituídos por este relatório.
+- A pedido do usuário, os SPECs e planos funcionais antigos foram removidos do workspace. A implementação existente em `src/` não foi apagada.
+- O questionário de QA foi dividido em onze SPECs diagnósticos independentes, todos em rascunho, na [fila `specs/inprocess`](../specs/inprocess/README.md).
+- O questionário consolidado permanece em [QA_TECNICO_PARA_SPARK.md](QA_TECNICO_PARA_SPARK.md); material histórico adicional está em [trabalhointermediario.md](../meu/trabalhointermediario.md).
 
 ## Implementação encontrada em `src/`
 
@@ -19,14 +19,12 @@ Projeto Roblox escrito em Luau e organizado com Rojo. A implementação usa mód
 - **SPEC-002 — validação:** validador puro, evento local e controller que consome o evento 001. Referências: [Validator002.luau](../src/ReplicatedStorage/Common/Validator002.luau), [OnSelectionValidated002.luau](../src/ReplicatedStorage/Common/OnSelectionValidated002.luau), [ValidationController002.client.luau](../src/StarterPlayer/StarterPlayerScripts/ValidationController002.client.luau).
 - **SPEC-003 — preview:** pool reutilizável, evento e renderer cliente. Referências: [PreviewPool003.luau](../src/ReplicatedStorage/Common/PreviewPool003.luau), [OnPreviewRenderRequested003.luau](../src/ReplicatedStorage/Common/OnPreviewRenderRequested003.luau), [PreviewRenderer003.client.luau](../src/StarterPlayer/StarterPlayerScripts/PreviewRenderer003.client.luau).
 - **SPEC-004 — topologia de paredes:** bitmask ortogonal, mapeamento de variantes e controller de avaliação. Referências: [WallTopology004.luau](../src/ReplicatedStorage/Common/WallTopology004.luau), [OnWallTopologyEvaluated004.luau](../src/ReplicatedStorage/Common/OnWallTopologyEvaluated004.luau), [TopologyController004.client.luau](../src/StarterPlayer/StarterPlayerScripts/TopologyController004.client.luau).
-- **SPEC-005 — pedido de construção:** há um plano, mas não encontrei sua implementação nos arquivos de `src/` listados nesta revisão. Consulte [005_plan.md](../plans/005_plan.md).
+- **SPEC-005 — pedido de construção:** agora há RemoteEvent, validação/aplicação server-side stub e submitter cliente. Referências: [BuildRemotes005.luau](../src/ReplicatedStorage/Common/BuildRemotes005.luau), [BuildServer005.server.luau](../src/ServerScriptService/BuildServer005.server.luau), [BuildSubmitter005.client.luau](../src/StarterPlayer/StarterPlayerScripts/BuildSubmitter005.client.luau).
 
-## Planos e Git no momento da consulta
+## Git no momento da consulta
 
-- [Plano 001](../plans/001_plan.md) e [Plano 002](../plans/002_plan.md) indicam trabalho implementado; o Plano 002 identifica aprovação humana.
-- Os códigos dos SPECs 003 e 004 já estão presentes e há commits correspondentes, mas os textos dos planos 003 e 004 ainda dizem “Aguardando Human Loop”. **Status documental a reconciliar** com o estado real.
-- [Plano 005](../plans/005_plan.md) indica que aguarda aprovação humana. Antes da criação deste relatório, `git status` mostrava esse plano como não rastreado.
-- O branch observado era `main`, com `origin` apontando para `https://github.com/SombraArcana/SparkGrounds.git`; o commit mais recente consultado era `b8bbc52` (SPEC-004).
+- A consulta anterior encontrou o branch `main`, com `origin` apontando para `https://github.com/SombraArcana/SparkGrounds.git` e o commit `732d665` (SPEC-005).
+- Os onze SPECs na fila são documentos locais novos. Não foi feito commit nesta tarefa; estarão disponíveis ao Spark quando o workspace/alterações forem compartilhados com a sessão dele.
 
 ## Pontos de QA registrados
 
@@ -39,7 +37,7 @@ Revisão estática anterior, sem alterações no código, sinalizou estes itens 
 5. **Seleção duplicada:** `AreaSelection` e `DragArea001` contêm cálculos de área em paralelo, com tipos/nomes de modo diferentes; convém confirmar qual fluxo deve permanecer. Veja [AreaSelection.luau](../src/ReplicatedStorage/Common/AreaSelection.luau) e [DragArea001.luau](../src/ReplicatedStorage/Common/DragArea001.luau).
 6. **Inicialização de `SelectionController`:** na busca anterior não foi encontrada chamada `require` para esse módulo; confirmar no Studio se é legado ou se está faltando inicialização. Veja [SelectionController.luau](../src/StarterGui/Controller/SelectionController.luau).
 
-Esses são apontamentos da revisão anterior — **não foram revalidados após os commits de 003/004**. A análise estática anterior não reportou erros do editor naquele momento; não foi feito teste de execução no Roblox Studio nesta conversa.
+Esses são apontamentos da revisão estática do snapshot `732d665`; não foram revalidados em runtime nesta tarefa. Consulte [a fila de SPECs QA](../specs/inprocess/README.md) para perguntas, escopo e testes de aceite individuais. A análise estática anterior não reportou erros do editor naquele momento; não foi feito teste no Roblox Studio nesta conversa.
 
 ## Papel do Copilot até aqui
 
@@ -49,6 +47,6 @@ Esses são apontamentos da revisão anterior — **não foram revalidados após 
 
 ## Próximos passos possíveis
 
-1. Confirmar ou atualizar o status dos planos 003 e 004.
-2. Aprovar/revisar o Plano 005 antes de qualquer build relacionado.
-3. Revalidar os apontamentos de QA contra o código atual e testar o fluxo no Roblox Studio.
+1. Entregar ao Spark um único SPEC da [fila `inprocess`](../specs/inprocess/README.md) por vez.
+2. Exigir o plano do item selecionado e aprová-lo antes de qualquer implementação ou alteração de código.
+3. Após o diagnóstico, decidir se cada apontamento requer correção, novo SPEC ou apenas documentação.

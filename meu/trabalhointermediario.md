@@ -1,246 +1,199 @@
-Convertendo o material exportado para o formato de SPEC que você definiu, os comportamentos cristalizados se transformam naturalmente em eventos de domínio.
+Aqui estão os **4 SPECs** formalizados e prontos para colar na pasta `specs/`.
 
-SPEC-001: SELEÇÃO_DE_ÁREA_ATUALIZADA
+---
 
-Status: RASCUNHO
- Criado por: Human Loop - Chatbot B
- Data: 2026-10-03
+**Arquivo: `specs/007_ON_UI_INITIALIZED.md`**
+```markdown
+# SPEC-007: ON_UI_INITIALIZED
+**Status:** RASCUNHO
+**Criado por:** Human Loop - Chatbot B
+**Data:** 2026-10-04
 
+## 1. Comportamento Observado
+O jogador precisa de uma interface mínima para interagir com o sistema de construção. A UI deve aparecer assim que o jogador entra no jogo e conter apenas o essencial: toolbar de modos e contador de recursos.
 
-
-1. Comportamento Observado
-
-Durante o modo de construção, o jogador arrasta o mouse sobre o grid para selecionar múltiplas células simultaneamente.
-
-O sistema precisa recalcular a seleção à medida que o cursor muda de célula.
-
-Para pisos, o comportamento esperado é preencher toda a área retangular. Para paredes, apenas o perímetro deve ser selecionado para evitar salas preenchidas.
-
-
-
-2. Evento (Fonte da Verdade)
+## 2. Evento (Fonte da Verdade)
+```json
 {
-  "evento": "SELECAO_DE_AREA_ATUALIZADA",
-  "atores": ["Jogador"],
+  "evento": "ON_UI_INITIALIZED",
+  "atores": ["Interface"],
   "dados": {
     "player_id": "string",
-    "tipo_construcao": "floor|wall",
-    "grid_inicio": {
-      "x": "number",
-      "z": "number"
-    },
-    "grid_final": {
-      "x": "number",
-      "z": "number"
-    },
-    "celulas_selecionadas": "GridCell[]",
     "timestamp": "number"
   }
 }
+```
 
-SPEC-002: SELEÇÃO_VALIDADA
+## 3. Processo
+```text
+Jogador entra no jogo
+↓
+Criar ScreenGui com toolbar e label de recursos
+↓
+Emitir ON_UI_INITIALIZED
+```
 
-Status: RASCUNHO
- Criado por: Human Loop - Chatbot B
- Data: 2026-10-03
+## 4. Critérios de Aceite
+- [ ] ScreenGui é criada corretamente no PlayerGui
+- [ ] Toolbar e contador de recursos ficam visíveis
+- [ ] UI não atrapalha a câmera ou o movimento do personagem
+- [ ] Sem erros no output do Studio
 
+## 5. Fora do Escopo
+Não implementa lógica de modos, não atualiza recursos, não mostra feedback de construção.
 
+## 6. Stack Alvo
+Roblox + Luau + Rojo + VS Code
+```
 
-1. Comportamento Observado
+---
 
-Enquanto o jogador arrasta uma seleção, cada célula precisa ser validada em tempo real.
+**Arquivo: `specs/008_ON_BUILD_MODE_CHANGED.md`**
+```markdown
+# SPEC-008: ON_BUILD_MODE_CHANGED
+**Status:** RASCUNHO
+**Criado por:** Human Loop - Chatbot B
+**Data:** 2026-10-04
 
-O sistema verifica limites do mapa, colisões, ocupação atual, tipo de solo e disponibilidade de recursos.
+## 1. Comportamento Observado
+O jogador precisa alternar facilmente entre construir Chão e construir Parede. A mudança de modo deve atualizar o estado interno e dar feedback visual na toolbar.
 
-A interface exibe feedback visual imediato indicando quais células podem ser construídas.
-
-
-
-2. Evento (Fonte da Verdade)
+## 2. Evento (Fonte da Verdade)
+```json
 {
-  "evento": "SELECAO_VALIDADA",
-  "atores": ["SistemaGrid"],
+  "evento": "ON_BUILD_MODE_CHANGED",
+  "atores": ["Jogador", "Interface"],
   "dados": {
     "player_id": "string",
-    "celulas_validas": "GridCell[]",
-    "celulas_invalidas": "GridCell[]",
-    "custo_total": "number",
-    "saldo_jogador": "number",
-    "orcamento_suficiente": "boolean",
-    "timestamp": "number"
+    "new_mode": "chao | parede",
+    "previous_mode": "chao | parede"
   }
 }
+```
 
-SPEC-003: PREVIEW_DE_CONSTRUÇÃO_ATUALIZADO
+## 3. Processo
+```text
+Jogador clica no botão ou pressiona tecla de atalho
+↓
+Atualizar modo atual
+↓
+Destacar botão correspondente na toolbar
+↓
+Emitir ON_BUILD_MODE_CHANGED
+```
 
-Status: RASCUNHO
- Criado por: Human Loop - Chatbot B
- Data: 2026-10-03
+## 4. Critérios de Aceite
+- [ ] Botões de Chão e Parede alternam o modo corretamente
+- [ ] Teclas de atalho (ex: 1 e 2) também funcionam
+- [ ] Botão ativo fica visualmente destacado
+- [ ] Modo atual é respeitado pelo sistema de drag
 
+## 5. Fora do Escopo
+Não cria a UI, não valida construção, não atualiza recursos.
 
+## 6. Stack Alvo
+Roblox + Luau + Rojo + VS Code
+```
 
-1. Comportamento Observado
+---
 
-O preview visual não representa entidades definitivas do mundo.
+**Arquivo: `specs/009_ON_RESOURCE_UPDATED.md`**
+```markdown
+# SPEC-009: ON_RESOURCE_UPDATED
+**Status:** RASCUNHO
+**Criado por:** Human Loop - Chatbot B
+**Data:** 2026-10-04
 
-O sistema utiliza objetos reutilizáveis para mostrar ao jogador o resultado esperado da construção.
+## 1. Comportamento Observado
+O contador de recursos na interface precisa refletir o saldo real do jogador em tempo real, tanto ao gastar quanto ao receber recursos.
 
-A atualização deve ocorrer somente quando houver alteração efetiva da célula final da seleção.
-
-
-
-2. Evento (Fonte da Verdade)
+## 2. Evento (Fonte da Verdade)
+```json
 {
-  "evento": "PREVIEW_DE_CONSTRUCAO_ATUALIZADO",
-  "atores": ["InterfacePreview"],
+  "evento": "ON_RESOURCE_UPDATED",
+  "atores": ["Sistema de Recursos", "Interface"],
   "dados": {
     "player_id": "string",
-    "quantidade_tiles": "number",
-    "quantidade_validos": "number",
-    "quantidade_invalidos": "number",
-    "pool_utilizado": "number",
-    "timestamp": "number"
+    "new_amount": "number",
+    "delta": "number"
   }
 }
+```
 
-SPEC-004: TOPOLOGIA_DE_PAREDE_AVALIADA
+## 3. Processo
+```text
+Saldo do jogador muda (gasto ou ganho)
+↓
+Emitir ON_RESOURCE_UPDATED
+↓
+Interface atualiza o texto do contador
+```
 
-Status: RASCUNHO
- Criado por: Human Loop - Chatbot B
- Data: 2026-10-03
+## 4. Critérios de Aceite
+- [ ] Contador mostra o valor correto após qualquer mudança
+- [ ] Atualização é instantânea (sem delay perceptível)
+- [ ] Funciona tanto para gasto quanto para ganho de recursos
+- [ ] Não ocorre erro se o valor for zero
 
+## 5. Fora do Escopo
+Não implementa o sistema de economia completo, não cria a UI, não valida construções.
 
+## 6. Stack Alvo
+Roblox + Luau + Rojo + VS Code
+```
 
-1. Comportamento Observado
+---
 
-Paredes devem adaptar sua geometria conforme os vizinhos ortogonais existentes.
+**Arquivo: `specs/010_ON_BUILD_FEEDBACK_SHOWN.md`**
+```markdown
+# SPEC-010: ON_BUILD_FEEDBACK_SHOWN
+**Status:** RASCUNHO
+**Criado por:** Human Loop - Chatbot B
+**Data:** 2026-10-04
 
-Durante o preview e após a confirmação da construção, o sistema recalcula automaticamente conexões para representar segmentos retos, cantos, cruzamentos e interseções.
+## 1. Comportamento Observado
+Após o jogador tentar construir, a interface precisa mostrar um feedback claro de sucesso ou de erro (ex: sem recursos, posição inválida).
 
-
-
-2. Evento (Fonte da Verdade)
+## 2. Evento (Fonte da Verdade)
+```json
 {
-  "evento": "TOPOLOGIA_DE_PAREDE_AVALIADA",
-  "atores": ["MotorTopologia"],
-  "dados": {
-    "cell_x": "number",
-    "cell_z": "number",
-    "mascara_vizinhos": "number",
-    "tipo_topologia": "isolada|reta|canto|t|cruz",
-    "timestamp": "number"
-  }
-}
-
-SPEC-005: REQUISIÇÃO_DE_CONSTRUÇÃO_ENVIADA
-
-Status: RASCUNHO
- Criado por: Human Loop - Chatbot B
- Data: 2026-10-03
-
-
-
-1. Comportamento Observado
-
-Ao liberar o botão do mouse, o jogador manifesta a intenção de executar a construção.
-
-O cliente não efetiva alterações diretamente no mundo.
-
-O servidor continua sendo a autoridade absoluta sobre custo, saldo, ocupação e resultado final.
-
-
-
-2. Evento (Fonte da Verdade)
-{
-  "evento": "REQUISICAO_DE_CONSTRUCAO_ENVIADA",
-  "atores": ["Jogador"],
+  "evento": "ON_BUILD_FEEDBACK_SHOWN",
+  "atores": ["Interface"],
   "dados": {
     "player_id": "string",
-    "tipo_construcao": "floor|wall",
-    "celulas_solicitadas": "GridCell[]",
-    "custo_estimado_cliente": "number",
-    "timestamp": "number"
+    "success": "boolean",
+    "message": "string"
   }
 }
+```
 
-SPEC-006: CONSTRUÇÃO_CONFIRMADA
+## 3. Processo
+```text
+Servidor responde à requisição de construção
+↓
+Cliente recebe resultado
+↓
+Emitir ON_BUILD_FEEDBACK_SHOWN
+↓
+Mostrar mensagem temporária na tela
+```
 
-Status: RASCUNHO
- Criado por: Human Loop - Chatbot B
- Data: 2026-10-03
+## 4. Critérios de Aceite
+- [ ] Mensagem de sucesso aparece quando a construção é aceita
+- [ ] Mensagem de erro aparece quando a construção é rejeitada
+- [ ] Feedback desaparece automaticamente após poucos segundos
+- [ ] Não empilha várias mensagens ao mesmo tempo
 
+## 5. Fora do Escopo
+Não valida a construção, não altera recursos, não cria a toolbar.
 
+## 6. Stack Alvo
+Roblox + Luau + Rojo + VS Code
+```
 
-1. Comportamento Observado
+---
 
-O servidor revalida toda a operação.
+Pronto.  
+Os 4 SPECs estão formalizados e seguem exatamente o template atômico.
 
-Caso saldo, ocupação e permissões permaneçam válidos, a construção é aplicada de forma atômica.
-
-Recursos são debitados apenas após a aprovação completa da operação.
-
-
-
-2. Evento (Fonte da Verdade)
-{
-  "evento": "CONSTRUCAO_CONFIRMADA",
-  "atores": ["Servidor"],
-  "dados": {
-    "player_id": "string",
-    "celulas_construidas": "GridCell[]",
-    "custo_final": "number",
-    "saldo_restante": "number",
-    "timestamp": "number"
-  }
-}
-
-SPEC-007: CONSTRUÇÃO_CANCELADA
-
-Status: RASCUNHO
- Criado por: Human Loop - Chatbot B
- Data: 2026-10-03
-
-
-
-1. Comportamento Observado
-
-O jogador pode interromper a operação utilizando ESC ou botão direito.
-
-Nenhuma alteração definitiva deve ocorrer.
-
-Todos os recursos visuais temporários devem ser liberados imediatamente.
-
-
-
-2. Evento (Fonte da Verdade)
-{
-  "evento": "CONSTRUCAO_CANCELADA",
-  "atores": ["Jogador"],
-  "dados": {
-    "player_id": "string",
-    "motivo": "esc|right_click|tool_changed",
-    "timestamp": "number"
-  }
-}
-
-Observação de arquitetura
-
-Os eventos acima revelam uma separação saudável em três contextos:
-
-Input do Jogador
-
-SELECAO_DE_AREA_ATUALIZADA
-REQUISICAO_DE_CONSTRUCAO_ENVIADA
-CONSTRUCAO_CANCELADA
-
-Simulação Cliente
-
-SELECAO_VALIDADA
-PREVIEW_DE_CONSTRUCAO_ATUALIZADO
-TOPOLOGIA_DE_PAREDE_AVALIADA
-
-Autoridade Servidor
-
-CONSTRUCAO_CONFIRMADA
-
-Essa divisão ajuda a evitar exploits porque os eventos do cliente passam a representar apenas intenções, enquanto os eventos do servidor representam mudanças reais de estado.
+Quer que eu gere agora o `plans/` do primeiro (007), ou prefere revisar/ajustar algum antes?
