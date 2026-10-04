@@ -11,6 +11,7 @@ local Workspace = game:GetService("Workspace")
 local Common = ReplicatedStorage:WaitForChild("Common")
 local DragArea001 = require(Common:WaitForChild("DragArea001"))
 local OnDragAreaUpdated001 = require(Common:WaitForChild("OnDragAreaUpdated001"))
+local BuildModeState008 = require(Common:WaitForChild("BuildModeState008"))
 
 local LOCAL_PLAYER = Players.LocalPlayer
 local RAY_DISTANCE = 1000
@@ -91,6 +92,8 @@ RunService.RenderStepped:Connect(function()
 	end
 	lastCurrent = current
 
+	-- SPEC-008: fonte única do modo é o BuildModeState008.
+	mode = BuildModeState008.get()
 	local playerId = if LOCAL_PLAYER then LOCAL_PLAYER.Name else "studio"
 	OnDragAreaUpdated001.fire({
 		player_id = playerId,
@@ -104,7 +107,9 @@ end)
 
 local DragController001 = {}
 
+-- TODO legado (SPEC-008): mantido por compatibilidade; delega para a fonte única.
 function DragController001.setMode(newMode: "chao" | "parede")
+	BuildModeState008.set(newMode)
 	mode = newMode
 end
 
